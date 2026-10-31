@@ -2,6 +2,8 @@ const router = require('express').Router()
 
 const { Note, User } = require('../models')
 
+const { tokenExtractor, isAdmin } = require('../util/middleware') 
+
 router.get('/', async (req, res) => {
   const users = await User.findAll({
     include: {
@@ -31,5 +33,22 @@ router.get('/:id', async (req, res) => {
     res.status(404).json("User not found.");
   }
 });
+
+router.put('/:username', tokenExtractor, isAdmin, async (req, res) => {
+  const user = await User.findOne({
+    where: {
+      username: req.params.username
+    }
+  })
+
+  if (user) {
+    user.disabled = req.body.disabled
+    await user.save()
+    res.json(user)
+  } else {
+    res.status(404).json({ error: "User not found"})
+  }
+
+})
 
 module.exports = router;
