@@ -1,10 +1,10 @@
-const { User, Blogs } = require('../models');
+const { User, Blog } = require('../models');
 
 const router = require('express').Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   const users = await User.findAll({
-    include: { model: Blogs, attributes: { exclude: ['userId']} }
+    include: { model: Blog, attributes: { exclude: ['userId']} }
   })
   res.json(users);
 })

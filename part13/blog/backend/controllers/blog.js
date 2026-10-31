@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const { User, Blogs } = require('../models')
+const { User, Blog } = require('../models')
 const { tokenExtractor } = require('../utils/middleware')
 const { Op } = require('sequelize')
 
 const blogFinder = async (req, res, next) => {
-  req.blog = await Blogs.findByPk(req.params.id);
+  req.blog = await Blog.findByPk(req.params.id);
   if (!req.blog) {
     return res.status(404).json({ error: 'Blog not found' })
   }
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     ]
   }
 
-  const blogs = await Blogs.findAll({
+  const blogs = await Blog.findAll({
     attributes: { exclude: 'userId'},
     include: { model: User, attributes: ['name']},
     where,
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', tokenExtractor, async (req, res) => {
     const user = await User.findByPk(req.decodedToken.id)
-    const blog = await Blogs.create({ ...req.body, userId: user.id })
+    const blog = await Blog.create({ ...req.body, userId: user.id })
     res.json(blog)
 })
 

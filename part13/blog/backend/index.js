@@ -3,13 +3,12 @@ const app = express()
 
 const { PORT } = require('./utils/config')
 const { connectToDatabase } = require('./utils/db')
-const blogsRouter = require('./controllers/blogs')
-const usersRouter = require('./controllers/users')
+const blogsRouter = require('./controllers/blog')
+const usersRouter = require('./controllers/user')
 const loginRouter = require('./controllers/login')
 const authorsRouter = require('./controllers/author')
 const resetRouter = require('./controllers/reset')
 const { errorHandler } = require('./utils/middleware')
-const { syncModels } = require('./models');
 
 app.use(express.json())
 
@@ -26,7 +25,6 @@ app.use(errorHandler)
 
 const start = async () => {
   await connectToDatabase()
-  await syncModels()
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })

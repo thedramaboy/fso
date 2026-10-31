@@ -8,6 +8,7 @@ router.post("/", async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ where: { username } })
+  
   // const passwordCorrect =
   //   password === 'secret' ? true : false;
 
