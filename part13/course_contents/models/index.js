@@ -1,16 +1,14 @@
 const Note = require('./note')
 const User = require('./user')
+const Team = require('./team')
+const Membership = require('./membership')
 
 Note.belongsTo(User)
 User.hasMany(Note)
 
-// const syncModels = async () => {
-//   User.sync({ alter: true })
-//   Note.sync({ alter: true })
-// }
-
-// syncModels()
+User.belongsToMany(Team, { through: Membership })
+Team.belongsToMany(User, { through: Membership })
 
 module.exports = {
-  Note, User
+  Note, User, Team, Membership
 }
