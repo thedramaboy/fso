@@ -51,21 +51,13 @@ router.get('/:id', async (req, res) => {
           attributes: ['name']
         }
       },
-      {
-        model: Team,
-        attributes: ['name', 'id'],
-        through: {
-          attributes: []
-        }
-      },
     ]
   })
 
-  if (user) {
-    res.json(user)
-  } else {
-    res.status(404).end()
+  if (!user) {
+    return res.status(404).end()
   }
+
 })
 
 router.put('/:username', tokenExtractor, isAdmin, async (req, res) => {
