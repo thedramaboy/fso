@@ -16,10 +16,20 @@ const errorHandler = (error, _req, res, next) => {
     })
   } else if (error.name === 'SequelizeDatabaseError') {
     return res.status(400).json({ error: error.message })
+  } else if (error.name === 'SequelizeForeignKeyConstraintError') {
+    return res.status(400).json({ error: 'invalid userId or blogId: referenced record does not exist' })
   }
 
   next(error);
 };
+
+const blogFinder = async (req, res, next) => {
+  req.blog = await Blog.findByPk(req.params.id);
+  if (!req.blog) {
+    return res.status(404).json({ error: 'Blog not found' })
+  }
+  next();
+}
 
 const tokenExtractor = (req, res, next) => {
   const authorization = req.get('authorization');
@@ -38,4 +48,5 @@ const tokenExtractor = (req, res, next) => {
 module.exports = {
   errorHandler,
   tokenExtractor,
+  blogFinder
 };

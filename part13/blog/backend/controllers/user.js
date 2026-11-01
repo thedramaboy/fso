@@ -1,4 +1,4 @@
-const { User, Blog } = require('../models');
+const { User, Blog, ReadingList } = require('../models');
 
 const router = require('express').Router();
 
@@ -15,11 +15,33 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
+  const where = {}
+
+  if (req.query.read) {
+    where.read = req.query.read === "true"
+  }
+
+  const user = await User.findByPk(req.params.id, {
+    attributes: ['name', 'username'],
+    include: [
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { 
+          exclude: ['userId', 'createdAt', 'updatedAt'] 
+        },
+        through: { 
+          attributes: ['id', 'read'],
+          where
+        }
+      }
+    ]
+  })
+
   if (user) {
     res.json(user)
   } else {
-    res.status(404).json("User not found")
+    res.status(404).json({ error: "User not found" })
   }
 })
 
