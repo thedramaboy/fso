@@ -1,0 +1,8 @@
+➜  part12 git:(main) ✗ docker run -it ubuntu bash
+root@e0278a6214ba:/# mkdir -p /usr/src/app
+root@e0278a6214ba:/# touch /usr/src/app/index.js
+root@e0278a6214ba:/# ls -l /usr/src/app
+total 0
+-rw-r--r-- 1 root root 0 Nov  2 21:22 index.js
+root@e0278a6214ba:/# exit
+exit
