@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { SECRET } = require('../utils/config');
+const { Session, User, Blog } = require('../models')
 
 const errorHandler = (error, _req, res, next) => {
-
+  console.error(error.name, '-', error.message)
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
@@ -31,17 +32,29 @@ const blogFinder = async (req, res, next) => {
   next();
 }
 
-const tokenExtractor = (req, res, next) => {
-  const authorization = req.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
-    } catch {
-      return res.status(401).json({ error: 'token invalid' });
-    }
-  } else {
-    return res.status(401).json({ error: 'token missing '});
+const tokenExtractor = async (req, res, next) => {
+  const authorization = req.get('authorization')
+  if (!authorization || !authorization.toLowerCase().startsWith('bearer ')) {
+    return res.status(401).json({ error: 'token missing' })
   }
+  const token = authorization.substring(7)
+
+  try {
+    req.decodedToken = jwt.verify(token, SECRET)
+  } catch {
+    return res.status(401).json({ error: 'token invalid' })
+  }
+  
+  const session = await Session.findOne({ where: { token } })
+  if (!session) {
+    return res.status(401).json({ error: "token not found"})
+  }
+
+  const user = await User.findByPk(session.userId)
+  if (!user || user.disabled) {
+    return res.status(403).json({ error: 'user was disabled'})
+  }
+  req.token = token
   next()
 }
 

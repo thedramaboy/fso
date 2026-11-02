@@ -9,7 +9,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
-    "test": "TESTING=true node --test --test-concurrency=1 tests/api_ch3.test.js",
+    "test": "TESTING=true node --test --test-concurrency=1",
     "start:test": "TESTING=true node index.js",
     "migration:down": "node utils/rollback.js"
   },

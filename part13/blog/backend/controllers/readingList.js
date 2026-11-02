@@ -3,7 +3,12 @@ const { ReadingList, User, Blog } = require('../models')
 const { tokenExtractor, blogFinder } = require('../utils/middleware')
 
 router.post('/', async (req, res) => {
+
   const { blogId, userId } = req.body
+
+  if (!blogId || !userId) {
+    return res.status(400).json({ error: "user or blog not found"})
+  }
 
   const user = await User.findByPk(userId)
   if (!user) {
@@ -30,7 +35,7 @@ router.put('/:id', tokenExtractor, async (req, res) => {
   }
 
   if (readList.userId !== req.decodedToken.id) {
-    return res.status(403).json({ error: 'read list is not yours'})
+    return res.status(401).json({ error: 'user can only mark their own'})
   }
 
   readList.read = req.body.read;

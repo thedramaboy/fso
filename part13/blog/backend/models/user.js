@@ -19,6 +19,12 @@ User.init({
     allowNull: false,
     unique: true,
     validate: { isEmail: true, notEmpty: true }
+  },
+  disabled: {
+    type: DataTypes.BOOLEAN,
+    timestamps: false,
+    allowNull: false,
+    defaultValue: false
   }
 }, {
   sequelize,

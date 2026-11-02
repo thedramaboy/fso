@@ -24,6 +24,12 @@ module.exports = {
                 defaultValue: false
             }
         })
+
+        await queryInterface.addConstraint('reading_lists', {
+            fields: ['user_id', 'blog_id'],
+            type: 'unique',
+            name: 'reading_lists_user_blog_unique'
+        })
     },
     down: async ({ context: queryInterface }) => {
         await queryInterface.dropTable('reading_lists')
